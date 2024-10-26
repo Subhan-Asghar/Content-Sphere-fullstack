@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef,useMemo  } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import JoditEditor from 'jodit-react'
@@ -9,6 +9,11 @@ const Create = () => {
   const [author, setAuthor] = useState('');
   const [content, setContent] = useState('');
   const navigate = useNavigate();
+
+  const config = useMemo(() => ({
+    height: 400, 
+     
+  }), []);
   const Submit = () => {
     const data = {
       title,
@@ -19,6 +24,7 @@ const Create = () => {
       axios.post('http://localhost:3000/create', data)
         .then((res) => {
           console.log(res.data.message)
+          window.location.reload();
 
         })
     } catch (err) {
@@ -42,8 +48,17 @@ const Create = () => {
 
       <div className='min-h-screen bg-gray-50 flex  justify-center p-6 '>
         <div className='bg-white p-8 rounded-lg shadow-lg  w-full'>
-          <h1 className='text-3xl font-bold text-teal-800 mb-6'>Create New Blog</h1>
+  
           <form onSubmit={Submit}>
+          <div className='flex justify-between items-center mb-6'>
+            <h1 className='text-3xl font-bold text-teal-800'>Create New Blog</h1>
+            <button
+              type='submit'
+              className='bg-teal-600 text-white hover:bg-teal-700 rounded-lg px-6 py-3 font-medium shadow-md transition duration-300'
+            >
+              Create Blog
+            </button>
+          </div>
             <div className='mb-4'>
               <label htmlFor='title' className='block text-gray-700 text-sm font-medium mb-2'>Title:
                 
@@ -72,21 +87,16 @@ const Create = () => {
               />
             </div>
             <div className='mb-6'>
-              <label htmlFor='content' className='block text-gray-700 text-sm font-medium mb-2'>
-                Content:</label>
-
+              <label htmlFor='content' className='block text-gray-700 text-sm font-medium mb-2'>Content:</label>
               <JoditEditor
                 ref={editor}
                 value={content}
-                onChange={(newContent) => setContent(newContent)}                required
+                config={config} // Pass configuration with height setting
+                onChange={(newContent) => setContent(newContent)}
+                required
               />
             </div>
-            <button
-              type='submit'
-              className='bg-teal-600 text-white hover:bg-teal-700 rounded-lg px-6 py-3 font-medium shadow-md transition duration-300'
-            >
-              Create Blog
-            </button>
+           
           </form>
         </div>
       </div>
